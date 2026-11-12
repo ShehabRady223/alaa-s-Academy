@@ -1,14 +1,38 @@
-import mongoose from 'mongoose';
-import { env } from './env';
 
-let connecting: Promise<void> | null = null;
+import mongoose from "mongoose";
 
-/** Safe to call on every request: connects once per process (serverless instance) and reuses the connection. */
-export function connectDb(): Promise<void> {
-  connecting ??= (async () => {
-    mongoose.set('strictQuery', true);
-    await mongoose.connect(env.MONGO_URI, { serverSelectionTimeoutMS: Number(process.env.MONGO_TIMEOUT_MS ?? 8000), maxPoolSize: 5 });
-    console.log('MongoDB connected');
-  })().catch((e) => { connecting = null; throw e; }); // a failed attempt must not be cached forever
-  return connecting;
+let cached = (globalThis as any).mongoose;
+
+if (!cached) {
+  cached = (globalThis as any).mongoose = {
+    conn: null,
+    promise: null,
+  };
+}
+
+export async function connectDB() {
+  if (cached.conn && mongoose.connection.readyState === 1) {
+    return cached.conn;
+  }
+
+  if (!process.env.MONGO_URI) {
+    throw new Error("MONGO_URI is missing");
+  }
+
+  if (!cached.promise) {
+    cached.promise = mongoose.connect(process.env.MONGO_URI, {
+      bufferCommands: false,
+      serverSelectionTimeoutMS: 10000,
+    });
+  }
+
+  try {
+    cached.conn = await cached.promise;
+    console.log("MongoDB connected successfully");
+    return cached.conn;
+  } catch (error) {
+    cached.promise = null;
+    console.error("MongoDB connection failed:", error);
+    throw error;
+  }
 }
