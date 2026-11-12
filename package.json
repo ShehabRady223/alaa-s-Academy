@@ -1,0 +1,22 @@
+{
+  "name": "alaas-academy",
+  "private": true,
+  "version": "3.0.0",
+  "description": "Alaa's Academy: exams and assignments platform",
+  "workspaces": [
+    "apps/api",
+    "apps/web"
+  ],
+  "engines": {
+    "node": "22.x"
+  },
+  "scripts": {
+    "build": "npm run build --workspace @alaas-academy/web",
+    "dev:api": "npm run dev --workspace @alaas-academy/api",
+    "dev:web": "npm run dev --workspace @alaas-academy/web",
+    "typecheck": "npm run typecheck --workspace @alaas-academy/api && npm run typecheck --workspace @alaas-academy/web",
+    "test": "npm test --workspace @alaas-academy/api",
+    "db:setup": "npm run db:setup --workspace @alaas-academy/api",
+    "migrate": "npm run migrate:v2 --workspace @alaas-academy/api"
+  }
+}

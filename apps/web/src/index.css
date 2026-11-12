@@ -1,0 +1,17 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html { -webkit-text-size-adjust: 100%; }
+  body { @apply bg-neutral-50 text-sm text-neutral-900 antialiased; }
+  :focus-visible { @apply outline-2 outline-offset-2 outline-brand-600; }
+  /* Numbers line up in tables and stats */
+  td, .tabular { font-variant-numeric: tabular-nums; }
+}
+
+@media print {
+  .no-print { display: none !important; }
+  body { background: #fff; }
+  @page { size: A4; margin: 12mm; }
+}

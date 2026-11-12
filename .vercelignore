@@ -1,0 +1,5 @@
+apps/api/tests
+apps/web/node_modules
+*.md
+!README.md
+.git
