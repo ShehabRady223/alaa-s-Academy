@@ -10,6 +10,7 @@ import { errorHandler, notFoundHandler } from './middleware/error';
 import { routes } from './routes';
 
 export const app = express();
+export default app;
 
 app.disable('x-powered-by');
 app.set('trust proxy', 1); // behind nginx / a load balancer
