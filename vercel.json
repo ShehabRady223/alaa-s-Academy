@@ -1,25 +1,45 @@
+
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "installCommand": "npm install",
-  "buildCommand": "npm run build",
-  "outputDirectory": "apps/web/dist",
-  "regions": [
-    "fra1"
-  ],
-  "functions": {
-    "api/index.ts": {
-      "maxDuration": 30,
-      "includeFiles": "node_modules/pdfkit/js/data/**"
+  "services": {
+    "api": {
+      "root": "apps/api",
+      "framework": "express",
+      "installCommand": "npm install",
+      "functions": {
+        "api/index.ts": {
+          "maxDuration": 30,
+          "includeFiles": "node_modules/pdfkit/js/data/**"
+        }
+      }
+    },
+    "web": {
+      "root": "apps/web",
+      "framework": "vite",
+      "installCommand": "npm install",
+      "buildCommand": "npm run build",
+      "outputDirectory": "dist",
+      "rewrites": [
+        {
+          "source": "/(.*)",
+          "destination": "/index.html"
+        }
+      ]
     }
   },
+  "regions": ["fra1"],
   "rewrites": [
     {
       "source": "/api/(.*)",
-      "destination": "/api/index?__p=$1"
+      "destination": {
+        "service": "api"
+      }
     },
     {
-      "source": "/((?!api/).*)",
-      "destination": "/index.html"
+      "source": "/(.*)",
+      "destination": {
+        "service": "web"
+      }
     }
   ],
   "headers": [
